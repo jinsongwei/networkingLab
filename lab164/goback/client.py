@@ -5,6 +5,7 @@
 
 import socket   #for sockets
 import sys  #for exit
+import select
 from check import ip_checksum
 
 # create dgram udp socket
@@ -34,20 +35,24 @@ resend = 0
 count = 1
 while(1) :
 
-    msg = str(msgList[nextseqnum])
     try :
-
-        s.settimeout(3)
-        d = ip_checksum(msg)
-        msg_d = d + msg
-        msg_seq_d = str(nextseqnum) + msg_d
-# check corrupted msg
-#    msg_d = 'll' + msg
-        if nextseqnum < base + windowSize :
-            print 'sending... ' + msg_seq_d
-            s.sendto(msg_seq_d, (host, port))
-            nextseqnum = nextseqnum + 1
-
+	while(1) :
+		if nextseqnum >= base + windowSize :
+			break
+	    	msg = str(msgList[nextseqnum])
+	        s.settimeout(3)
+	        d = ip_checksum(msg)
+	        msg_d = d + msg
+	        msg_seq_d = str(nextseqnum) + msg_d
+	# check corrupted msg
+	#    msg_d = 'll' + msg
+	        if nextseqnum < base + windowSize :
+	            print 'sending... ' + msg_seq_d
+	            s.sendto(msg_seq_d, (host, port))
+	            nextseqnum = nextseqnum + 1
+		else :
+			break
+	
 
         # receive data from client (data, addr)
         try:
