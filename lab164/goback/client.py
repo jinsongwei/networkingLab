@@ -39,6 +39,8 @@ while(1) :
 	while(1) :
 		if nextseqnum >= base + windowSize :
 			break
+		if nextseqnum > 9 :
+			break
 	    	msg = str(msgList[nextseqnum])
 	        s.settimeout(3)
 	        d = ip_checksum(msg)
@@ -64,11 +66,12 @@ while(1) :
             print 'time out!!!'
             nextseqnum = base
             continue
-
+	if reply == '9':
+		break
         if reply == str(base) :
             base = base + 1
-#        elif :
-#            nextseqnum = base
+        else :
+            nextseqnum = base
 
 
     except socket.error, msg:
